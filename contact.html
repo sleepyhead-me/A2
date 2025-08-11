@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Saadat Notes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Page-specific styles for the contact form -->
+    <style>
+        #contact-form-widget{ max-width: 500px; width: 100%; margin: 0 auto; background: var(--bg-secondary); padding: 2.5rem; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px var(--shadow-color); }
+        .form-title h3 { font-size: 1.75rem; margin:0 0 .5rem 0; }
+        .form-title p { margin:0 0 1.5rem 0; color: var(--text-secondary); }
+        .input-group { position: relative; margin-bottom: 1.5rem; }
+        .form-label { position: absolute; left: 1rem; top: .9rem; padding: 0 0.25rem; background-color: var(--bg-secondary); color: var(--text-secondary); font-size: 1rem; transition: all 0.3s ease; pointer-events: none; }
+        .form-input { padding: 1rem; } /* Use shared form-input style */
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -0.7rem; left: 0.75rem; font-size: 0.8rem; color: var(--accent-primary);
+        }
+        .form-result { margin-top: 1.5rem; padding: 1rem; border-radius: 8px; text-align: center; display: none; font-weight: 500; color: white; }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="logo-area"><img src="https://i.ibb.co/68c1mP7/Saadat-Notes-Logo.png" alt="Logo"><div class="logo-text"><h1>Saadat Notes</h1><p>For Dept. of Mathematics (2023-2024)</p></div></a>
+            <button class="hamburger-menu" id="hamburger-menu-btn" aria-label="Open menu"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12H21" stroke-width="2.5" stroke="currentColor" stroke-linecap="round"/><path d="M3 6H21" stroke-width="2.5" stroke-linecap="round"/><path d="M3 18H21" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+        </div>
+    </header>
+
+    <div class="mobile-nav-panel" id="mobile-nav">
+        <button class="close-nav" id="close-nav-btn" aria-label="Close menu">&times;</button>
+        <nav><ul><li><a href="index.html">Dashboard</a></li><li><a href="notes.html">Hand Notes</a></li><li><a href="gallery.html">Gallery</a></li><li><a href="contact.html">Contact Us</a></li></ul></nav>
+    </div>
+
+    <main class="page-container">
+        <div id="contact-form-widget">
+            <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                <input type="hidden" name="access_key" value="bafe3e4d-ed3a-41bd-ae70-7dd14d1d7793">
+                <input type="hidden" name="subject" value="New Message from Saadat Notes">
+                <input type="hidden" name="redirect" value="https://web3forms.com/success">
+                
+                <div class="form-title"><h3>Contact Us</h3><p>Questions or feedback? We'd love to hear from you.</p></div>
+                <div class="input-group"><input type="text" name="name" class="form-input" placeholder=" " required><label class="form-label">Full Name</label></div>
+                <div class="input-group"><input type="email" name="email" class="form-input" placeholder=" " required><label class="form-label">Email Address</label></div>
+                <div class="input-group"><textarea name="message" class="form-input" rows="4" placeholder=" " required></textarea><label class="form-label">Your Message</label></div>
+                
+                <button type="submit" class="primary-button" style="width:100%;">Send Message</button>
+                <div class="form-result"></div>
+            </form>
+        </div>
+    </main>
+    
+    <footer class="site-footer"><p>© 2024 Saadat Notes. All rights reserved.</p></footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contact-form');
+            if (!form) return;
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const result = form.querySelector('.form-result');
+                const btn = form.querySelector('button[type="submit"]');
+                const formData = new FormData(form);
+                const object = {};
+                formData.forEach((value, key) => { object[key] = value; });
+                const json = JSON.stringify(object);
+
+                result.innerHTML = "Sending...";
+                result.style.display = 'block';
+                result.style.backgroundColor = '#6c757d';
+                btn.disabled = true;
+
+                fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: json
+                })
+                .then(async (response) => {
+                    let jsonResponse = await response.json();
+                    if (response.status == 200) {
+                        result.innerHTML = jsonResponse.message;
+                        result.style.backgroundColor = '#28a745';
+                    } else {
+                        result.innerHTML = jsonResponse.message;
+                        result.style.backgroundColor = '#dc3545';
+                    }
+                })
+                .catch(error => {
+                    result.innerHTML = "Something went wrong!";
+                    result.style.backgroundColor = '#dc3545';
+                })
+                .finally(() => {
+                    form.reset();
+                    btn.disabled = false;
+                    setTimeout(() => { result.style.display = 'none'; }, 5000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
